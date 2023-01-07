@@ -3,8 +3,9 @@ import { Sequelize } from 'sequelize-typescript';
 import { UserEntity } from 'src/user/user.entity';
 import config from './config';
 import { CompanyEntity } from 'src/company/company.entity';
+import { EmployeeEntity } from 'src/employee/employee.entity';
 
-export const dbClient = async () => {
+export const dbClient = async (dbName: string = config().database.dbClientNameDefault) => {
   try {
     const sequelize =
       new Sequelize(
@@ -32,7 +33,7 @@ export const dbClient = async () => {
         },
       });
 
-    sequelize.addModels([]);
+    sequelize.addModels([EmployeeEntity]);
     await sequelize.sync();
     return sequelize;
   } catch (error) {
@@ -40,7 +41,7 @@ export const dbClient = async () => {
   }
 }
 
-export const dbManager = async (id: number = 5) => {
+export const dbManager = async (id: number = 1) => {
   try {
     const sequelize =
       new Sequelize(
@@ -49,20 +50,23 @@ export const dbManager = async (id: number = 5) => {
         config().database.pass, {
         dialect: 'mysql',
         port: config().database.port,
-        replication: {
-          write: {
-            host: config().database.host,
-            port: config().database.port,
-          },
-          read: [{
-            port: config().database.port,
-          }]
-        },
+        host: config().database.host,
+        // replication: {
+        //   write: {
+        //     host: config().database.host,
+        //     port: config().database.port,
+        //   },
+        //   read: [{
+        //     port: config().database.port,
+        //   }]
+        // },
         pool: {
           // max: 30,
           idle: 10000
         },
-        define: { timestamps: false }
+        define: {
+          timestamps: false
+        }
       });
 
     sequelize.addModels([CompanyEntity, UserEntity]);

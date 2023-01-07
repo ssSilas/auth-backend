@@ -1,32 +1,72 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { UserEntity } from './user.entity';
 
 @Injectable()
 export class UserService {
-  constructor( 
+  constructor(
     @Inject('USER_REPOSITORY')
     private readonly userRepo: typeof UserEntity
-  ){}
+  ) { }
 
-  async findAll(){
+  async findAll() {
     return await this.userRepo.findOne({
-      attributes:['name', 'email', 'status']
+      attributes: ['name', 'email', 'status']
     });
   }
 
-  async findByEmail(email:string)
-    {
-      try {
-        return await this.userRepo.findOne({
-          attributes: ['id', 'email', 'company', 'password' ],
-          where:{email}
-        }); 
-      } catch (error) {
-        throw new NotFoundException(error.message);
+  async findByLogin(login: string) {
+    try {
+      const user = await this.userRepo.findOne({
+        raw: true,
+        attributes: ['id', 'email', 'companyfk', 'password'],
+        where: { login }
+      });
+      if (!user) {
+        throw new NotFoundException(
+          "O usuario não existe, favor informar um email válido"
+        );
       }
+      return user
+    } catch (error) {
+      throw error
+    }
   }
 
-  async login( email:string, senha:string ){
+  async emailExist(email: string) {
+    try {
+      const validation = await this.userRepo.findOne({
+        attributes: ['id', 'email', 'companyfk', 'password'],
+        where: { email }
+      });
+
+      if (validation) {
+        throw new BadRequestException(
+          "O email já é utilizado, favor informar um email válido"
+        );
+      }
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async loginExist(login: string) {
+    try {
+      const validation = await this.userRepo.findOne({
+        attributes: ['id', 'email', 'companyfk', 'password'],
+        where: { login }
+      });
+
+      if (validation) {
+        throw new BadRequestException(
+          "O login já é utilizado, favor informar um login válido"
+        );
+      }
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async login(email: string, senha: string) {
     return {
       email,
       senha

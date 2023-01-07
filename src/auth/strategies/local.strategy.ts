@@ -7,19 +7,20 @@ import { AuthService } from "../auth.service";
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly authService: AuthService) {
-    super({ 
+    super({
       usernameField: 'login',
       passwordField: 'password'
     })
   }
-  
-  async validate(login:string, password:string){
+
+  async validate(login: string, password: string) {
     //open manager conection
     await dbManager()
     try {
       const user = await this.authService.validateUser(login, password)
-      if(!user) throw new UnauthorizedException({message: "Email e/ou senha inválidos"})
-      return user 
+      if (!user) throw new UnauthorizedException({ message: "Login e/ou senha inválidos" })
+
+      return user
     } catch (error) {
       console.log(error)
       throw error

@@ -24,7 +24,6 @@ export class Tokengenerate {
     let oneMinute = 60000;
 
     let expiration = date + hours * 60 * oneMinute + minutes * oneMinute;
-
     const objTokengenerate: object = {
       iss: server,
       aud: server,
@@ -50,42 +49,59 @@ export class AuthService {
     private readonly userService: UserService
   ) { }
 
-  async createUser(body: CreateUserDto){
-    const generatePass = this.createHashForPass(body.password)
-    return await this.userRepo.create({
-      // d
-    })
+  async createUser(body: CreateUserDto) {
+    try {
+      //validations
+      await this.userService.emailExist(body.email)
+      await this.userService.loginExist(body.login)
+
+      const generatePass = this.createHashForPass(body.password)
+      return await this.userRepo.create({
+        name: body.name,
+        email: body.email,
+        login: body.login,
+        password: generatePass,
+        status: 1,
+        companyfk:1
+      })
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
   }
 
   async login(user: UserDataForTokenDto, host: string) {
-    const response = await this.tokenGenerate.tokenApidot8(user, host)
-    return { token: response }
+    try {
+      const response = await this.tokenGenerate.tokenApidot8(user, host)
+      return { token: response }
+    } catch (error) {
+      throw error
+    }
   }
 
-  async validateUser(email: string, password: string) {
+  async validateUser(login: string, password: string) {
     let user: UserEntity
     let compare: boolean
 
-    const passForCompare = this.createHashForPass(password)
     try {
-      user = await this.userService.findByEmail(email)
+      user = await this.userService.findByLogin(login)
+      const passForCompare = this.createHashForPass(password)
       compare = passForCompare === user.password;
+
+      const response: object = {
+        id: user.id,
+        email: user.email,
+        company: user.companyfk
+      }
+
+      if (!compare) return null
+      return response
     } catch (error) {
-      console.log(error)
-      return null
+      throw error
     }
-
-    const response: object = {
-      id: user.id,
-      email: user.email,
-      company: user.company
-    }
-
-    if (!compare) return null
-    return response
   }
 
-  createHashForPass( password:string ){
+  createHashForPass(password: string) {
     const salt: string = config().salt;
     const baseHash = String(salt + password)
     const hash = createHash('sha1').update(baseHash).digest('hex')

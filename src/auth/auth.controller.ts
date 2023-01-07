@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'helpers/dto/user.dto';
@@ -13,7 +13,7 @@ export class AuthController {
       const { headers } = req
       return await this.authService.login(req.user, headers.host) 
     } catch (error) {
-      throw error
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
     }
   }
 
@@ -22,7 +22,7 @@ export class AuthController {
     try {
       return await this.authService.createUser(body) 
     } catch (error) {
-      throw error
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST)
     }
   }
 }

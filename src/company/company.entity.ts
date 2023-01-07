@@ -1,4 +1,5 @@
-import { Column, Model, Table } from "sequelize-typescript";
+import { Column, HasMany, Model, Table } from "sequelize-typescript";
+import { UserEntity } from "src/user/user.entity";
 
 @Table({ tableName: 'company', modelName: 'company', freezeTableName: true  })
 export class CompanyEntity extends Model {
@@ -20,4 +21,7 @@ export class CompanyEntity extends Model {
 
   @Column({ allowNull: false })
   databasename: string
+
+  @HasMany(() => UserEntity)
+  user: UserEntity[];
 }

@@ -11,6 +11,7 @@ import { CompanyEntity } from './company.entity';
       provide: 'COMPANY_REPOSITORY',
       useValue: CompanyEntity
     }
-  ]
+  ],
+  exports:['COMPANY_REPOSITORY']
 })
 export class CompanyModule { }

@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { UserEntity } from './user.entity';
 
 @Injectable()
@@ -22,8 +22,8 @@ export class UserService {
         where: { login }
       });
       if (!user) {
-        throw new NotFoundException(
-          "O usuario não existe, favor informar um email válido"
+        throw new UnauthorizedException(
+          "O usuario não existe, favor informar um login válido"
         );
       }
       return user

@@ -1,0 +1,9 @@
+Tarefas:
+- Implementar criação de funcionarios
+- Implementar alternar entre bancos
+- Utilizar bcrypt para hash de senha: https://docs.nestjs.com/security/encryption-and-hashing
+
+Ideias:
+
+Integrar back ao front
+Implementar ecosystem.js

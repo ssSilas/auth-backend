@@ -1,8 +1,8 @@
 import { Column, ForeignKey, Model, Table } from "sequelize-typescript"
 import { CompanyEntity } from "src/company/company.entity"
 
-@Table({ tableName: 'user', modelName: 'user', freezeTableName: true  })
-export class UserEntity extends Model{
+@Table({ tableName: 'user', modelName: 'user', freezeTableName: true })
+export class UserEntity extends Model {
   @Column({
     primaryKey: true,
     allowNull: false,
@@ -10,22 +10,22 @@ export class UserEntity extends Model{
   })
   id: number
 
-  @Column({allowNull: false})
+  @Column({ allowNull: false })
   name: string
 
-  @Column({allowNull: false})
+  @Column({ allowNull: false })
   email: string
 
-  @Column({allowNull: false})
+  @Column({ allowNull: false })
   login: string
 
-  @Column({allowNull: false})
+  @Column({ allowNull: false })
   password: string
 
-  @Column({allowNull: false})
+  @Column({ allowNull: false })
   status: number
 
   @ForeignKey(() => CompanyEntity)
-  @Column({allowNull: false})
+  @Column({ allowNull: false })
   companyfk: number
 }
